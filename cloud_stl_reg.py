@@ -2,7 +2,6 @@
 
 import numpy as np
 import open3d as o3d
-
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import os
@@ -110,7 +109,6 @@ def icp(A, B, init_pose=None, max_iterations=20, tolerance=0.000001):
     for i in range(max_iterations):
         # find the nearest neighbors between the current source and destination points
         distances, indices = nearest_neighbor(src[:m, :].T, dst[:m, :].T)
-        print(np.mean(distances))
 
         # compute the transformation between the current source and nearest destination points
         T, T_inv = best_fit_transform(src[:m, :].T, dst[:m, indices].T)
@@ -158,28 +156,8 @@ def reg(stp_path, stl_path, pcd_path, save_file_path):
 
 
 def main():
-    '''
-    stp_path = r"/home/dataset/cloud/split"
-    stl_path = r"/home/dataset/cloud/stl"
-    pcd_path = r"/home/dataset/cloud/npy"
-
-    stp_files = [file for file in os.listdir(stp_path) if file.lower().endswith(".stp")]
-    for stp_file in stp_files:
-        stp_file_path = os.path.join(stp_path, stp_file)
-        stl_file_name = pcd_file_dir = stp_file.split('.')[0]
-        stl_file_path = os.path.join(stl_path, stl_file_name + ".stl")
-        pcd_file_path = os.path.join(pcd_path, pcd_file_dir, "coord_sampled.npy")
-        
-        peizhun(stp_file_path, stl_file_path, pcd_file_path)
-    '''
     
-    '''
-    pcd_file_path = r"/home/chenjiayi/peizhun/coord_pre_downsample.npy"
-    stl_file_path = r"/home/chenjiayi/peizhun/00196.stl"
-    stp_file_path = r"/home/chenjiayi/peizhun/00196.stp"
-    peizhun(stp_file_path, stl_file_path, pcd_file_path)
-    '''
-    path = r"G:\Data\point_cloud"
+    path = r"Path\to\point_cloud"
     dirs = os.listdir(path)
     for dir in dirs:
         if "." in dir:
@@ -190,16 +168,6 @@ def main():
         pcd_file_path = os.path.join(path, dir, 'pre_downsample.txt')
         save_file_path = os.path.join(path, dir, '3d_model_reg.step')
         reg(stp_file_path, stl_file_path, pcd_file_path, save_file_path)
-
-        """
-        if os.path.exists(os.path.join(path, dir, "new_3d_model.step")):
-            os.remove(os.path.join(path, dir, "new_3d_model.step"))
-
-            print(dir, "done.")
-
-        """
-        break
-    
 
 if __name__ == "__main__":
     main()
