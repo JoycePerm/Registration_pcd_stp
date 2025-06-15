@@ -1,4 +1,3 @@
-from OCC.Core.STEPControl import STEPControl_Reader
 from OCC.Core.TopAbs import (
     TopAbs_COMPOUND,
     TopAbs_COMPSOLID,
@@ -10,22 +9,18 @@ from OCC.Core.TopAbs import (
     TopAbs_VERTEX,
 )
 from OCC.Core.TopExp import TopExp_Explorer
-
-from OCC.Core.STEPControl import STEPControl_Reader, STEPControl_AsIs
 from OCC.Core.StlAPI import StlAPI_Writer
 from OCC.Core.BRepMesh import BRepMesh_IncrementalMesh
-from OCC.Core.STEPControl import STEPControl_Reader, STEPControl_Writer
-from OCC.Core.STEPControl import STEPControl_Reader
+from OCC.Core.STEPControl import STEPControl_Reader, STEPControl_Writer, STEPControl_AsIs
+from OCC.Core.BRepAlgoAPI import BRepAlgoAPI_Fuse
 import math
 import numpy as np
-
-from OCC.Core.BRepAlgoAPI import BRepAlgoAPI_Fuse
 import open3d as o3d
 import os
 from contextlib import contextmanager
 
 @contextmanager
-def modified_file_logger(log_path=r"/home/chenjiayi/peizhun/stp_to_stl_failed.txt"):
+def modified_file_logger(log_path=r"stp_to_stl_failed.txt"):
     """上下文管理器：自动管理modified.txt文件写入"""
     try:
         with open(log_path, 'a', encoding='utf-8') as log_file:
@@ -100,14 +95,13 @@ def read_stp(file_path):
         return None
 
     return step_reader
+    
 def stp_to_stl(stp_file_path, stl_file_path, linear_deflection=0.0001):
     step_reader = read_stp(stp_file_path)
     if step_reader is None:
         print("step_reader")
         return None
     solid_list = get_solids(step_reader)
-    
-    
     try:
         # print(len(solid_list), shape)
         # 对形状进行网格划分
@@ -126,26 +120,16 @@ def stp_to_stl(stp_file_path, stl_file_path, linear_deflection=0.0001):
             log_file.write(f"stp_to_stl failed:{stp_file_path}""\n")
     return 1
 
-
 def main():
-    path = r"\\10.1.1.102\26.CypWeld项目组\13.AI点云资料\规范化数据\实验室数据\pre_downsample_20250309"
-
-    '''
-    stp_files = [file for file in os.listdir(stp_path) if file.lower().endswith(".stp")]
-    stl_files = [file for file in os.listdir(stl_path) if file.lower().endswith(".stl")]
-    for stp_file in stp_files:
-        stl_file_name = stp_file.split('.')[0] + '.stl'
-        if stl_file_name not in stl_files:
-            stp_file_path = os.path.join(stp_path, stp_file)
-            stl_file_path = os.path.join(stl_path, stl_file_name)
-            stp_to_stl(stp_file_path, stl_file_path)
-    '''
-    for i in range(400, 410):
-        stp_file_path = path + '\\' +  str(i) + '\\3d_model.step'
-        stl_file_path = path + '\\' +  str(i) + '\\3d_model.stl'
+    path = r"Path\to\data"
+    dirs = os.listdir(path)
+    for dir in dirs:
+        if "." in dir:
+            continue
+    
+        stp_file_path = os.path.join(path, dir, '3d_model.step')
+        stl_file_path = os.path.join(path, dir, '3d_model.stl')
         stp_to_stl(stp_file_path, stl_file_path)
-
-
 
 if __name__ == "__main__":
     main()
